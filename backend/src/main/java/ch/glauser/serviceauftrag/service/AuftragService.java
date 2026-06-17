@@ -84,7 +84,8 @@ public class AuftragService {
     @PreAuthorize("hasRole('BEREICHSLEITER')")
     public AuftragResponse disponieren(Long id, DisponierenRequest request) {
         Auftrag auftrag = ladeAuftrag(id);
-        pruefeUebergang(auftrag, Status.DISPONIERT);
+        // Disponiert wird nur aus dem Zustand ERFASST.
+        erwarteUebergang(auftrag, Status.ERFASST, Status.DISPONIERT);
 
         Mitarbeiter mitarbeiter = mitarbeiterRepository.findById(request.mitarbeiterId())
                 .orElseThrow(() -> new NotFoundException(
@@ -104,7 +105,7 @@ public class AuftragService {
     @PreAuthorize("hasAnyRole('MITARBEITER', 'BEREICHSLEITER')")
     public AuftragResponse alsAusgefuehrtMarkieren(Long id, RapportRequest request) {
         Auftrag auftrag = ladeAuftrag(id);
-        pruefeUebergang(auftrag, Status.AUSGEFUEHRT);
+        erwarteUebergang(auftrag, Status.DISPONIERT, Status.AUSGEFUEHRT);
 
         BenutzerPrincipal aktuell = aktuellerBenutzer();
         // Ein Mitarbeiter darf nur den ihm zugewiesenen Auftrag rapportieren.
@@ -135,7 +136,8 @@ public class AuftragService {
     @PreAuthorize("hasRole('BEREICHSLEITER')")
     public AuftragResponse rapportAblehnen(Long id) {
         Auftrag auftrag = ladeAuftrag(id);
-        pruefeUebergang(auftrag, Status.DISPONIERT);
+        // Ablehnen ist nur moeglich, solange der Auftrag ausgefuehrt (aber noch nicht verrechnet) ist.
+        erwarteUebergang(auftrag, Status.AUSGEFUEHRT, Status.DISPONIERT);
 
         rapportRepository.findByAuftragId(id).ifPresent(rapportRepository::delete);
         auftrag.setStatus(Status.DISPONIERT);
@@ -150,7 +152,7 @@ public class AuftragService {
     @PreAuthorize("hasAnyRole('BEREICHSLEITER', 'GESCHAEFTSLEITER')")
     public AuftragResponse alsVerrechnetMarkieren(Long id) {
         Auftrag auftrag = ladeAuftrag(id);
-        pruefeUebergang(auftrag, Status.VERRECHNET);
+        erwarteUebergang(auftrag, Status.AUSGEFUEHRT, Status.VERRECHNET);
         auftrag.setStatus(Status.VERRECHNET);
         return zuResponse(auftrag);
     }
@@ -159,9 +161,14 @@ public class AuftragService {
     //  Hilfsmethoden
     // ---------------------------------------------------------------
 
-    /** Prueft den Statuswechsel und wirft bei Verstoss eine fachliche Exception. */
-    private void pruefeUebergang(Auftrag auftrag, Status ziel) {
-        if (!auftrag.getStatus().darfWechselnNach(ziel)) {
+    /**
+     * Stellt sicher, dass sich der Auftrag im erwarteten Quellzustand befindet und der
+     * Uebergang dorthin fachlich erlaubt ist. Andernfalls fliegt eine fachliche Exception.
+     * Operationen mit gleichem Zielzustand (disponieren / rapportAblehnen -> DISPONIERT)
+     * werden so sauber voneinander getrennt.
+     */
+    private void erwarteUebergang(Auftrag auftrag, Status quelle, Status ziel) {
+        if (auftrag.getStatus() != quelle || !quelle.darfWechselnNach(ziel)) {
             throw new UngueltigerStatusUebergangException(auftrag.getStatus(), ziel);
         }
     }
