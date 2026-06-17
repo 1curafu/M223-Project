@@ -1,24 +1,45 @@
-# Compiled class file
+# ===== Secrets / lokale Umgebung =====
+# Niemals echte Supabase- oder JWT-Zugangsdaten committen
+.env
+.env.*
+!.env.example
+*.local
+application-local.yml
+application-local.properties
+secrets.properties
+
+# ===== Java / Maven (Backend) =====
+target/
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
 *.ear
+hs_err_pid*
+replay_pid*
+# Maven-Wrapper-JAR wird beim ersten Lauf geladen
+!.mvn/wrapper/maven-wrapper.jar
+
+# ===== Node / Vite (Frontend) =====
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+.vite/
+
+# ===== IDE / OS =====
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# MS-Office-Sperrdateien
+~$*
+
+# ===== Archive (nicht committen) =====
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
