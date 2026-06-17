@@ -1,0 +1,19 @@
+# Test-Profil: isolierte In-Memory-DB (H2 im PostgreSQL-Modus), keine externen Secrets noetig.
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      # Tabellen fuer Tests aus den Entities generieren
+      ddl-auto: create-drop
+    open-in-view: false
+
+app:
+  jwt:
+    secret: test-secret-test-secret-test-secret-test-secret-1234567890
+    expiration-ms: 28800000
+  cors:
+    allowed-origins: http://localhost:5173

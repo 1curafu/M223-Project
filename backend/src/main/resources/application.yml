@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: serviceauftrag
+  # Zugangsdaten kommen ausschliesslich aus Umgebungsvariablen - keine Secrets im Repo.
+  datasource:
+    url: ${SUPABASE_DB_URL}
+    username: ${SUPABASE_DB_USER}
+    password: ${SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    # Das Schema wird via db/schema.sql in Supabase angelegt, nicht von Hibernate verwaltet.
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    # Schweizer/ISO-Datumsformat, keine Zeitstempel als Zahl
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+
+# Anwendungsspezifische Einstellungen
+app:
+  jwt:
+    # JWT-Secret ebenfalls nur aus dem Environment (mind. 32 Zeichen / 256 Bit).
+    secret: ${JWT_SECRET}
+    # Gueltigkeit des Tokens in Millisekunden (Standard: 8 Stunden)
+    expiration-ms: 28800000
+  cors:
+    # Vite-Dev-Server
+    allowed-origins: http://localhost:5173
+
+logging:
+  level:
+    org.springframework.security: INFO
