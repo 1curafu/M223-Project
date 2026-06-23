@@ -1,0 +1,25 @@
+# Lokales Entwicklungsprofil: laeuft komplett ohne Supabase.
+# Start: ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+# Daten liegen in einer In-Memory-H2-DB und werden beim Start frisch eingespielt.
+spring:
+  datasource:
+    url: jdbc:h2:mem:serviceauftrag;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      # Schema fuer die lokale DB aus den Entities erzeugen
+      ddl-auto: create-drop
+    open-in-view: false
+  # H2-Konsole unter http://localhost:8080/h2-console (optional zum Reinschauen)
+  h2:
+    console:
+      enabled: true
+
+app:
+  jwt:
+    secret: lokales-dev-secret-bitte-nur-fuer-entwicklung-min-32-zeichen
+    expiration-ms: 28800000
+  cors:
+    allowed-origins: http://localhost:5173
