@@ -72,11 +72,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- In-Memory-DB nur fuer Integrationstests -->
+		<!-- In-Memory-DB fuer Integrationstests und das lokale Profil (ohne Supabase) -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>test</scope>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>

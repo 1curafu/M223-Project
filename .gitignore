@@ -1,11 +1,12 @@
 # ===== Secrets / lokale Umgebung =====
-# Niemals echte Supabase- oder JWT-Zugangsdaten committen
+# Niemals echte Supabase- oder JWT-Zugangsdaten committen.
+# Echte Secrets gehoeren in backend/.env (ignoriert), NICHT in versionierte Configs.
+# Hinweis: backend/src/main/resources/application-local.yml ist bewusst eingecheckt –
+# es enthaelt nur das H2-Dev-Profil (Dummy-Secret), keine echten Zugangsdaten.
 .env
 .env.*
 !.env.example
 *.local
-application-local.yml
-application-local.properties
 secrets.properties
 
 # ===== Java / Maven (Backend) =====
@@ -43,3 +44,5 @@ dist-ssr/
 *.zip
 *.tar.gz
 *.rar
+
+/.claude
