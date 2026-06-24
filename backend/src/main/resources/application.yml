@@ -12,9 +12,6 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
 
 server:
   port: 8080
@@ -29,7 +26,3 @@ app:
   cors:
     # Vite-Dev-Server
     allowed-origins: http://localhost:5173
-
-logging:
-  level:
-    org.springframework.security: INFO
